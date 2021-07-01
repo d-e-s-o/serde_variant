@@ -13,9 +13,6 @@ description = """
 Retrieve serde provided variant names for enum objects.
 """
 
-[badges]
-gitlab = { repository = "d-e-s-o/serde_variant", branch = "master" }
-
 [dependencies]
 serde = {version = "1.0", default-features = false}
 
