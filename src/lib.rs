@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Daniel Mueller <deso@posteo.net>
+// Copyright (C) 2020-2021 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use std::error::Error;
@@ -155,13 +155,13 @@ impl<'a> SerdeSerializer for &'a mut Serializer {
 
   fn serialize_newtype_struct<T>(
     self,
-    _name: &'static str,
+    name: &'static str,
     _value: &T,
   ) -> Result<Self::Ok, Self::Error>
   where
     T: ?Sized + Serialize,
   {
-    Err(Self::Error::custom("serialize_newtype_struct"))
+    Ok(name)
   }
 
   fn serialize_newtype_variant<T>(
@@ -255,11 +255,7 @@ mod tests {
   struct Bar(u64);
 
   #[test]
-  fn newtype_struct_unsupported() {
-    let result = to_variant_name(&Bar(42));
-    assert_eq!(
-      result.unwrap_err().to_string(),
-      "serialize_newtype_struct is not supported"
-    );
+  fn newtype_struct() {
+    assert_eq!(to_variant_name(&Bar(42)).unwrap(), "Bar");
   }
 }

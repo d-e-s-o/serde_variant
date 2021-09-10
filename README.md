@@ -7,6 +7,7 @@ serde_variant
 =============
 
 - [Documentation][docs-rs]
+- [Changelog](CHANGELOG.md)
 
 So you have just carefully defined your `enum` to be serialized and
 deserialized using [`serde`][serde] as you intended and now you need an
