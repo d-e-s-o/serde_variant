@@ -238,24 +238,25 @@ impl<'a> SerdeSerializer for &'a mut Serializer {
 mod tests {
   use super::*;
 
-  #[derive(Serialize)]
-  enum Foo {
-    Var1,
-    #[serde(rename = "VAR2")]
-    Var2,
-  }
-
   #[test]
   fn unit_variant_names() {
+    #[derive(Serialize)]
+    enum Foo {
+      Var1,
+      #[serde(rename = "VAR2")]
+      Var2,
+    }
+
     assert_eq!(to_variant_name(&Foo::Var1).unwrap(), "Var1");
     assert_eq!(to_variant_name(&Foo::Var2).unwrap(), "VAR2");
   }
 
-  #[derive(Serialize)]
-  struct Bar(u64);
 
   #[test]
   fn newtype_struct() {
+    #[derive(Serialize)]
+    struct Bar(u64);
+
     assert_eq!(to_variant_name(&Bar(42)).unwrap(), "Bar");
   }
 }
