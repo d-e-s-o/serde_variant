@@ -168,13 +168,13 @@ impl<'a> SerdeSerializer for &'a mut Serializer {
     self,
     _name: &'static str,
     _variant_index: u32,
-    _variant: &'static str,
+    variant: &'static str,
     _value: &T,
   ) -> Result<Self::Ok, Self::Error>
   where
     T: ?Sized + Serialize,
   {
-    Err(Self::Error::custom("serialize_newtype_variant"))
+    Ok(variant)
   }
 
   fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
@@ -251,6 +251,18 @@ mod tests {
     assert_eq!(to_variant_name(&Foo::Var2).unwrap(), "VAR2");
   }
 
+  #[test]
+  fn newtype_variant_names() {
+    #[derive(Serialize)]
+    enum Foo {
+      Var1(()),
+      #[serde(rename = "VAR2")]
+      Var2(u32),
+    }
+
+    assert_eq!(to_variant_name(&Foo::Var1(())).unwrap(), "Var1");
+    assert_eq!(to_variant_name(&Foo::Var2(42)).unwrap(), "VAR2");
+  }
 
   #[test]
   fn newtype_struct() {
