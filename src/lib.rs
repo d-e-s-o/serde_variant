@@ -8,6 +8,7 @@ use std::fmt::Result as FmtResult;
 
 use serde::ser::Error as SerdeError;
 use serde::ser::Impossible;
+use serde::ser::SerializeTupleVariant;
 use serde::Serialize;
 use serde::Serializer as SerdeSerializer;
 
@@ -53,6 +54,26 @@ where
 }
 
 
+/// A serializer for tuple enum variants.
+struct TupleVariantSerializer(&'static str);
+
+impl SerializeTupleVariant for TupleVariantSerializer {
+  type Ok = &'static str;
+  type Error = UnsupportedType;
+
+  fn serialize_field<T>(&mut self, _value: &T) -> Result<(), Self::Error>
+  where
+    T: Serialize + ?Sized,
+  {
+    Ok(())
+  }
+
+  fn end(self) -> Result<Self::Ok, Self::Error> {
+    Ok(self.0)
+  }
+}
+
+
 /// A serde serializer that converts an enum variant into the variant's
 /// name.
 struct Serializer {}
@@ -64,7 +85,7 @@ impl<'a> SerdeSerializer for &'a mut Serializer {
   type SerializeSeq = Impossible<Self::Ok, Self::Error>;
   type SerializeTuple = Impossible<Self::Ok, Self::Error>;
   type SerializeTupleStruct = Impossible<Self::Ok, Self::Error>;
-  type SerializeTupleVariant = Impossible<Self::Ok, Self::Error>;
+  type SerializeTupleVariant = TupleVariantSerializer;
   type SerializeMap = Impossible<Self::Ok, Self::Error>;
   type SerializeStruct = Impossible<Self::Ok, Self::Error>;
   type SerializeStructVariant = Impossible<Self::Ok, Self::Error>;
@@ -197,10 +218,10 @@ impl<'a> SerdeSerializer for &'a mut Serializer {
     self,
     _name: &'static str,
     _variant_index: u32,
-    _variant: &'static str,
+    variant: &'static str,
     _len: usize,
   ) -> Result<Self::SerializeTupleVariant, Self::Error> {
-    Err(Self::Error::custom("serialize_tuple_variant"))
+    Ok(TupleVariantSerializer(variant))
   }
 
   fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap, Self::Error> {
@@ -262,6 +283,19 @@ mod tests {
 
     assert_eq!(to_variant_name(&Foo::Var1(())).unwrap(), "Var1");
     assert_eq!(to_variant_name(&Foo::Var2(42)).unwrap(), "VAR2");
+  }
+
+  #[test]
+  fn tuple_variant_names() {
+    #[derive(Serialize)]
+    enum Foo {
+      BAz((), u64),
+      #[serde(rename = "VAR")]
+      Var((), (), ()),
+    }
+
+    assert_eq!(to_variant_name(&Foo::BAz((), 1337)).unwrap(), "BAz");
+    assert_eq!(to_variant_name(&Foo::Var((), (), ())).unwrap(), "VAR");
   }
 
   #[test]
