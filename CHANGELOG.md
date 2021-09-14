@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.1.1
+-----
 - Added support for newtype structs, newtype enum variants, and tuple
   enum variants to `to_variant_name`
 
