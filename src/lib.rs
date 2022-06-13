@@ -5,7 +5,6 @@ use std::error::Error;
 use std::fmt::Display;
 use std::fmt::Formatter;
 use std::fmt::Result as FmtResult;
-use std::marker::PhantomData;
 
 use serde::de;
 use serde::ser;
@@ -71,6 +70,29 @@ impl ser::SerializeTupleVariant for TupleVariantSerializer {
     }
 }
 
+/// A serializer for struct enum variants.
+struct StructVariantSerializer(&'static str);
+
+impl ser::SerializeStructVariant for StructVariantSerializer {
+    type Ok = &'static str;
+    type Error = UnsupportedType;
+
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        _key: &'static str,
+        _value: &T,
+    ) -> Result<(), Self::Error>
+    where
+        T: Serialize,
+    {
+        Ok(())
+    }
+
+    fn end(self) -> Result<Self::Ok, Self::Error> {
+        Ok(self.0)
+    }
+}
+
 /// A serde serializer that converts an enum variant into the variant's
 /// name.
 struct Serializer {}
@@ -85,7 +107,7 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     type SerializeTupleVariant = TupleVariantSerializer;
     type SerializeMap = ser::Impossible<Self::Ok, Self::Error>;
     type SerializeStruct = ser::Impossible<Self::Ok, Self::Error>;
-    type SerializeStructVariant = ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStructVariant = StructVariantSerializer;
 
     fn serialize_bool(self, _v: bool) -> Result<Self::Ok, Self::Error> {
         Err(Self::Error::custom("serialize_bool"))
@@ -158,41 +180,8 @@ impl<'a> ser::Serializer for &'a mut Serializer {
         Err(Self::Error::custom("serialize_unit"))
     }
 
-    fn serialize_unit_struct(self, _name: &'static str) -> Result<Self::Ok, Self::Error> {
-        Err(Self::Error::custom("serialize_unit_struct"))
-    }
-
-    fn serialize_unit_variant(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        variant: &'static str,
-    ) -> Result<Self::Ok, Self::Error> {
-        Ok(variant)
-    }
-
-    fn serialize_newtype_struct<T>(
-        self,
-        name: &'static str,
-        _value: &T,
-    ) -> Result<Self::Ok, Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
+    fn serialize_unit_struct(self, name: &'static str) -> Result<Self::Ok, Self::Error> {
         Ok(name)
-    }
-
-    fn serialize_newtype_variant<T>(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        variant: &'static str,
-        _value: &T,
-    ) -> Result<Self::Ok, Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        Ok(variant)
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
@@ -237,10 +226,10 @@ impl<'a> ser::Serializer for &'a mut Serializer {
         self,
         _name: &'static str,
         _variant_index: u32,
-        _variant: &'static str,
+        variant: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeStructVariant, Self::Error> {
-        Err(Self::Error::custom("serialize_struct_variant"))
+        Ok(StructVariantSerializer(variant))
     }
 
     fn collect_str<T>(self, _value: &T) -> Result<Self::Ok, Self::Error>
@@ -248,6 +237,39 @@ impl<'a> ser::Serializer for &'a mut Serializer {
         T: ?Sized,
     {
         Err(Self::Error::custom("collect_str"))
+    }
+
+    fn serialize_unit_variant(
+        self,
+        _name: &'static str,
+        _variant_index: u32,
+        variant: &'static str,
+    ) -> Result<Self::Ok, Self::Error> {
+        Ok(variant)
+    }
+
+    fn serialize_newtype_struct<T>(
+        self,
+        name: &'static str,
+        _value: &T,
+    ) -> Result<Self::Ok, Self::Error>
+    where
+        T: ?Sized + Serialize,
+    {
+        Ok(name)
+    }
+
+    fn serialize_newtype_variant<T>(
+        self,
+        _name: &'static str,
+        _variant_index: u32,
+        variant: &'static str,
+        _value: &T,
+    ) -> Result<Self::Ok, Self::Error>
+    where
+        T: ?Sized + Serialize,
+    {
+        Ok(variant)
     }
 }
 
@@ -265,8 +287,6 @@ where
         })
     }
 }
-
-use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum DeserializationError {
