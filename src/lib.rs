@@ -337,184 +337,142 @@ impl<'de> Deserializer<'de> {
 impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     type Error = DeserializationError;
 
-    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_bool<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_i8<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_u8<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_i16<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_u16<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_i32<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_u32<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_u64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_i64<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_u64<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_i128<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_u128<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_f32<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_f64<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_unit<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_i128<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_char<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_u128<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_str<V>(mut self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        unimplemented!()
-    }
-
-    fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        unimplemented!()
-    }
-
-    fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        unimplemented!()
-    }
-
-    fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        unimplemented!()
-    }
-
-    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        unimplemented!()
-    }
-
-    fn is_human_readable(&self) -> bool {
-        true
+        let res = visitor.visit_borrowed_str(&self.input);
+        self.input = "";
+        res
     }
 
     fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        unimplemented!()
+        self.deserialize_str(visitor)
     }
 
-    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_bytes<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
         unimplemented!()
     }
 
-    fn deserialize_struct<V>(
-        self,
-        name: &'static str,
-        fields: &'static [&'static str],
-        visitor: V,
-    ) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        unimplemented!()
-    }
-
-    fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_byte_buf<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
@@ -525,33 +483,77 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
+        self.deserialize_str(visitor)
+    }
+
+    fn deserialize_tuple<V>(self, _len: usize, _visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        unimplemented!()
+    }
+
+    fn deserialize_struct<V>(
+        self,
+        _name: &'static str,
+        _fields: &'static [&'static str],
+        _visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
         unimplemented!()
     }
 
     fn deserialize_unit_struct<V>(
         self,
-        name: &'static str,
+        _name: &'static str,
         visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        unimplemented!()
-    }
-
-    fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        unimplemented!()
+        visitor.visit_newtype_struct(self)
     }
 
     fn deserialize_tuple_struct<V>(
         self,
-        name: &'static str,
-        len: usize,
-        visitor: V,
+        _name: &'static str,
+        _len: usize,
+        _visitor: V,
     ) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        unimplemented!()
+    }
+
+    fn deserialize_map<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        unimplemented!()
+    }
+
+    fn deserialize_seq<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        unimplemented!()
+    }
+
+    fn deserialize_option<V>(mut self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        visitor.visit_enum(VariantName::new(&mut self))
+    }
+
+    fn is_human_readable(&self) -> bool {
+        true
+    }
+
+    fn deserialize_ignored_any<V>(self, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
@@ -560,72 +562,80 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
 
     fn deserialize_newtype_struct<V>(
         self,
-        name: &'static str,
+        _name: &'static str,
         visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        unimplemented!()
+        visitor.visit_newtype_struct(self)
     }
 
     fn deserialize_enum<V>(
-        self,
-        name: &'static str,
-        variants: &'static [&'static str],
+        mut self,
+        _name: &'static str,
+        _variants: &'static [&'static str],
         visitor: V,
     ) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        EnumVariantVisitor
+        visitor.visit_enum(VariantName::new(&mut self))
     }
 }
 
-struct EnumVariantVisitor<E>(PhantomData<E>);
-
-impl<'de, E> de::Visitor<'de> for EnumVariantVisitor<E> {
-    type Value = E;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a valid enum variant name")
-    }
-
-    fn visit_enum<A>(self, data: A) -> Result<Self::Value, A::Error>
-    where
-        A: serde::de::EnumAccess<'de>,
-    {
-        //let variant = data.variant()?;
-        unimplemented!()
-    }
-}
-
-struct Enum<'a, 'de: 'a> {
+struct VariantName<'a, 'de: 'a> {
     de: &'a mut Deserializer<'de>,
 }
 
-impl<'a, 'de> Enum<'a, 'de> {
+impl<'a, 'de> VariantName<'a, 'de> {
     fn new(de: &'a mut Deserializer<'de>) -> Self {
-        Enum { de }
+        VariantName { de }
     }
 }
 
-impl<'de, 'a> de::EnumAccess<'de> for Enum<'a, 'de> {
+impl<'de, 'a> de::EnumAccess<'de> for VariantName<'a, 'de> {
     type Error = DeserializationError;
     type Variant = Self;
 
-    fn variant_seed<V>(self, seed: V) -> Result<(V::Value, Self::Variant)>
+    fn variant_seed<V>(self, seed: V) -> Result<(V::Value, Self::Variant), DeserializationError>
     where
         V: de::DeserializeSeed<'de>,
     {
-        // The `deserialize_enum` method parsed a `{` character so we are
-        // currently inside of a map. The seed will be deserializing itself from
-        // the key of the map.
-        let val = seed.deserialize(&mut *self.de)?;
-        // Parse the colon separating map key from value.
-        if self.de.next_char()? == ':' {
-            Ok((val, self))
-        }
+        Ok((seed.deserialize(&mut *self.de)?, self))
+    }
+}
+
+impl<'de, 'a> de::VariantAccess<'de> for VariantName<'a, 'de> {
+    type Error = DeserializationError;
+
+    fn unit_variant(self) -> Result<(), DeserializationError> {
+        Ok(())
+    }
+
+    fn newtype_variant_seed<T>(self, _seed: T) -> Result<T::Value, DeserializationError>
+    where
+        T: de::DeserializeSeed<'de>,
+    {
+        unimplemented!("newtype")
+    }
+
+    fn tuple_variant<V>(self, _len: usize, _visitor: V) -> Result<V::Value, DeserializationError>
+    where
+        V: de::Visitor<'de>,
+    {
+        unimplemented!("tuple")
+    }
+
+    fn struct_variant<V>(
+        self,
+        _fields: &'static [&'static str],
+        _visitor: V,
+    ) -> Result<V::Value, DeserializationError>
+    where
+        V: de::Visitor<'de>,
+    {
+        unimplemented!("struct")
     }
 }
 
@@ -676,6 +686,14 @@ mod tests {
         }
 
         #[test]
+        fn unit_struct() {
+            #[derive(Serialize)]
+            struct Bar;
+
+            assert_eq!(to_str(&Bar).unwrap(), "Bar");
+        }
+
+        #[test]
         fn newtype_struct() {
             #[derive(Serialize)]
             struct Bar(u64);
@@ -698,6 +716,40 @@ mod tests {
 
             assert_eq!(from_str::<Foo>("Var1").unwrap(), Foo::Var1);
             assert_eq!(from_str::<Foo>("VAR2").unwrap(), Foo::Var2);
+        }
+
+        #[test]
+        fn tuple_variant_names() {
+            #[derive(Debug, PartialEq, Deserialize)]
+            enum Foo {
+                BAz(u8),
+                #[serde(rename = "VAR")]
+                Var((), (), u8),
+            }
+
+            dbg!(from_str::<Foo>("BAz"));
+
+            assert!(from_str::<Foo>("BAz").is_err());
+            assert!(from_str::<Foo>("VAR").is_err());
+        }
+
+        #[test]
+        fn unit_struct() {
+            #[derive(Debug, Deserialize, PartialEq)]
+            struct Bar;
+
+            assert_eq!(from_str::<Bar>("Bar").unwrap(), Bar);
+        }
+
+        #[test]
+        fn unit_struct_renamed() {
+            #[derive(Debug, Deserialize, PartialEq)]
+            #[serde(rename = "BAR")]
+            struct Bar;
+
+            assert_eq!(from_str::<Bar>("BAR").unwrap(), Bar);
+            assert!(from_str::<Bar>("bAR").is_err());
+            assert!(from_str::<Bar>("bar").is_err());
         }
     }
 }
