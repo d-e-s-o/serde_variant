@@ -110,20 +110,34 @@ mod tests {
             }
         }
 
-        #[test]
-        fn unit_struct() {
-            #[derive(Serialize)]
-            struct Bar;
+        mod structs {
+            use super::*;
 
-            assert_eq!(to_str(&Bar).unwrap(), "Bar");
-        }
+            #[test]
+            fn unit_structs() {
+                #[derive(Serialize)]
+                struct Bar;
 
-        #[test]
-        fn newtype_struct() {
-            #[derive(Serialize)]
-            struct Bar(u64);
+                assert_eq!(to_str(&Bar).unwrap(), "Bar");
+            }
 
-            assert_eq!(to_str(&Bar(42)).unwrap(), "Bar");
+            #[test]
+            fn newtype_structs() {
+                #[derive(Serialize)]
+                struct Bar(u64);
+
+                assert_eq!(to_str(&Bar(42)).unwrap(), "Bar");
+            }
+
+            #[test]
+            fn field_structs() {
+                #[derive(Serialize)]
+                struct Bar {
+                    field: u8,
+                }
+
+                assert_eq!(to_str(&Bar { field: 0 }).unwrap(), "Bar");
+            }
         }
     }
 
@@ -182,40 +196,44 @@ mod tests {
                 assert_eq!(from_str::<Foo>("VAR2").unwrap(), Foo::Var2);
             }
 
-            #[test]
-            fn newtype_variants() {
-                #[derive(Debug, PartialEq, Deserialize)]
-                enum Foo {
-                    Foo(u8),
+            mod impossible {
+                use super::*;
+
+                #[test]
+                fn newtype_variants() {
+                    #[derive(Debug, PartialEq, Deserialize)]
+                    enum Foo {
+                        Foo(u8),
+                    }
+
+                    assert!(from_str::<Foo>("Foo").is_err());
                 }
 
-                assert!(from_str::<Foo>("Foo").is_err());
-            }
+                #[test]
+                fn tuple_variants() {
+                    #[derive(Debug, PartialEq, Deserialize)]
+                    enum Foo {
+                        BAz(u8),
+                        #[serde(rename = "VAR")]
+                        Var((), (), u8),
+                    }
 
-            #[test]
-            fn tuple_variants() {
-                #[derive(Debug, PartialEq, Deserialize)]
-                enum Foo {
-                    BAz(u8),
-                    #[serde(rename = "VAR")]
-                    Var((), (), u8),
+                    assert!(from_str::<Foo>("BAz").is_err());
+                    assert!(from_str::<Foo>("VAR").is_err());
                 }
 
-                assert!(from_str::<Foo>("BAz").is_err());
-                assert!(from_str::<Foo>("VAR").is_err());
-            }
+                #[test]
+                fn struct_variants() {
+                    #[derive(Debug, PartialEq, Deserialize)]
+                    enum Foo {
+                        BAz(u8),
+                        #[serde(rename = "VAR")]
+                        Var((), (), u8),
+                    }
 
-            #[test]
-            fn struct_variants() {
-                #[derive(Debug, PartialEq, Deserialize)]
-                enum Foo {
-                    BAz(u8),
-                    #[serde(rename = "VAR")]
-                    Var((), (), u8),
+                    assert!(from_str::<Foo>("BAz").is_err());
+                    assert!(from_str::<Foo>("VAR").is_err());
                 }
-
-                assert!(from_str::<Foo>("BAz").is_err());
-                assert!(from_str::<Foo>("VAR").is_err());
             }
         }
 
@@ -275,20 +293,39 @@ mod tests {
             #[test]
             fn unit_struct() {
                 #[derive(Debug, Deserialize, PartialEq)]
-                struct Bar;
+                struct Foo;
 
-                assert_eq!(from_str::<Bar>("Bar").unwrap(), Bar);
-            }
-
-            #[test]
-            fn unit_struct_renamed() {
                 #[derive(Debug, Deserialize, PartialEq)]
                 #[serde(rename = "BAR")]
                 struct Bar;
 
+                assert_eq!(from_str::<Foo>("Foo").unwrap(), Foo);
                 assert_eq!(from_str::<Bar>("BAR").unwrap(), Bar);
+
                 assert!(from_str::<Bar>("bAR").is_err());
                 assert!(from_str::<Bar>("bar").is_err());
+            }
+
+            mod impossible {
+                use super::*;
+
+                #[test]
+                fn newtype_struct() {
+                    #[derive(Debug, Deserialize, PartialEq)]
+                    struct Foo(u8);
+
+                    assert!(from_str::<Foo>("Foo").is_err());
+                }
+
+                #[test]
+                fn field_struct() {
+                    #[derive(Debug, Deserialize, PartialEq)]
+                    struct Foo {
+                        field: u8,
+                    }
+
+                    assert!(from_str::<Foo>("Foo").is_err());
+                }
             }
         }
     }
