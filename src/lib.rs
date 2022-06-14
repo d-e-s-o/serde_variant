@@ -50,43 +50,64 @@ mod tests {
     mod ser {
         use super::*;
 
-        #[test]
-        fn unit_variant_names() {
-            #[derive(Serialize)]
-            enum Foo {
-                Var1,
-                #[serde(rename = "VAR2")]
-                Var2,
+        mod enums {
+            use super::*;
+
+            #[test]
+            fn unit_variants() {
+                #[derive(Serialize)]
+                enum Foo {
+                    Var1,
+                    #[serde(rename = "VAR2")]
+                    Var2,
+                }
+
+                assert_eq!(to_str(&Foo::Var1).unwrap(), "Var1");
+                assert_eq!(to_str(&Foo::Var2).unwrap(), "VAR2");
             }
 
-            assert_eq!(to_str(&Foo::Var1).unwrap(), "Var1");
-            assert_eq!(to_str(&Foo::Var2).unwrap(), "VAR2");
-        }
+            #[test]
+            fn newtype_variants() {
+                #[derive(Serialize)]
+                enum Foo {
+                    Var1(()),
+                    #[serde(rename = "VAR2")]
+                    Var2(u32),
+                }
 
-        #[test]
-        fn newtype_variant_names() {
-            #[derive(Serialize)]
-            enum Foo {
-                Var1(()),
-                #[serde(rename = "VAR2")]
-                Var2(u32),
+                assert_eq!(to_str(&Foo::Var1(())).unwrap(), "Var1");
+                assert_eq!(to_str(&Foo::Var2(42)).unwrap(), "VAR2");
             }
 
-            assert_eq!(to_str(&Foo::Var1(())).unwrap(), "Var1");
-            assert_eq!(to_str(&Foo::Var2(42)).unwrap(), "VAR2");
-        }
+            #[test]
+            fn tuple_variants() {
+                #[derive(Serialize)]
+                enum Foo {
+                    BAz((), u64),
+                    #[serde(rename = "VAR")]
+                    Var((), (), ()),
+                }
 
-        #[test]
-        fn tuple_variant_names() {
-            #[derive(Serialize)]
-            enum Foo {
-                BAz((), u64),
-                #[serde(rename = "VAR")]
-                Var((), (), ()),
+                assert_eq!(to_str(&Foo::BAz((), 1337)).unwrap(), "BAz");
+                assert_eq!(to_str(&Foo::Var((), (), ())).unwrap(), "VAR");
             }
 
-            assert_eq!(to_str(&Foo::BAz((), 1337)).unwrap(), "BAz");
-            assert_eq!(to_str(&Foo::Var((), (), ())).unwrap(), "VAR");
+            #[test]
+            fn struct_variants() {
+                #[derive(Serialize)]
+                enum Foo {
+                    Var1 {
+                        field: u8,
+                    },
+                    #[serde(rename = "Renamed")]
+                    Var2 {
+                        foo: &'static str,
+                    },
+                }
+
+                assert_eq!(to_str(&Foo::Var1 { field: 0 }).unwrap(), "Var1");
+                assert_eq!(to_str(&Foo::Var2 { foo: "BAR" }).unwrap(), "Renamed");
+            }
         }
 
         #[test]
@@ -109,49 +130,166 @@ mod tests {
     mod de {
         use super::*;
 
-        #[test]
-        fn unit_variant_names() {
-            #[derive(Debug, PartialEq, Deserialize)]
-            enum Foo {
-                Var1,
-                #[serde(rename = "VAR2")]
-                Var2,
+        mod enums {
+            use super::*;
+
+            #[test]
+            fn case_sensisitive() {
+                #[derive(Debug, PartialEq, Deserialize)]
+                #[allow(non_camel_case_types)]
+                enum Foo {
+                    foo,
+                    FoO,
+                    FOO,
+                    fOO,
+                }
+
+                assert_eq!(from_str::<Foo>("foo").unwrap(), Foo::foo);
+                assert_eq!(from_str::<Foo>("FoO").unwrap(), Foo::FoO);
+                assert_eq!(from_str::<Foo>("FOO").unwrap(), Foo::FOO);
+                assert_eq!(from_str::<Foo>("fOO").unwrap(), Foo::fOO);
+                assert!(from_str::<Foo>("Foo").is_err());
+                assert!(from_str::<Foo>("fOo").is_err());
+                assert!(from_str::<Foo>("foO").is_err());
+                assert!(from_str::<Foo>("FOo").is_err());
             }
 
-            assert_eq!(from_str::<Foo>("Var1").unwrap(), Foo::Var1);
-            assert_eq!(from_str::<Foo>("VAR2").unwrap(), Foo::Var2);
-        }
+            #[test]
+            fn space_sensisitive() {
+                #[derive(Debug, PartialEq, Deserialize)]
+                #[allow(non_camel_case_types)]
+                enum Foo {
+                    Foo,
+                }
 
-        #[test]
-        fn tuple_variant_names() {
-            #[derive(Debug, PartialEq, Deserialize)]
-            enum Foo {
-                BAz(u8),
-                #[serde(rename = "VAR")]
-                Var((), (), u8),
+                assert_eq!(from_str::<Foo>("Foo").unwrap(), Foo::Foo);
+                assert!(from_str::<Foo>("Foo ").is_err());
+                assert!(from_str::<Foo>(" Foo").is_err());
+                assert!(from_str::<Foo>("F oo").is_err());
+                assert!(from_str::<Foo>("F o o").is_err());
             }
 
-            assert!(from_str::<Foo>("BAz").is_err());
-            assert!(from_str::<Foo>("VAR").is_err());
+            #[test]
+            fn unit_variants() {
+                #[derive(Debug, PartialEq, Deserialize)]
+                enum Foo {
+                    Var1,
+                    #[serde(rename = "VAR2")]
+                    Var2,
+                }
+
+                assert_eq!(from_str::<Foo>("Var1").unwrap(), Foo::Var1);
+                assert_eq!(from_str::<Foo>("VAR2").unwrap(), Foo::Var2);
+            }
+
+            #[test]
+            fn newtype_variants() {
+                #[derive(Debug, PartialEq, Deserialize)]
+                enum Foo {
+                    Foo(u8),
+                }
+
+                assert!(from_str::<Foo>("Foo").is_err());
+            }
+
+            #[test]
+            fn tuple_variants() {
+                #[derive(Debug, PartialEq, Deserialize)]
+                enum Foo {
+                    BAz(u8),
+                    #[serde(rename = "VAR")]
+                    Var((), (), u8),
+                }
+
+                assert!(from_str::<Foo>("BAz").is_err());
+                assert!(from_str::<Foo>("VAR").is_err());
+            }
+
+            #[test]
+            fn struct_variants() {
+                #[derive(Debug, PartialEq, Deserialize)]
+                enum Foo {
+                    BAz(u8),
+                    #[serde(rename = "VAR")]
+                    Var((), (), u8),
+                }
+
+                assert!(from_str::<Foo>("BAz").is_err());
+                assert!(from_str::<Foo>("VAR").is_err());
+            }
         }
 
-        #[test]
-        fn unit_struct() {
-            #[derive(Debug, Deserialize, PartialEq)]
-            struct Bar;
+        mod structs {
+            use super::*;
 
-            assert_eq!(from_str::<Bar>("Bar").unwrap(), Bar);
-        }
+            #[test]
+            #[allow(non_camel_case_types)]
+            fn case_sensisitive() {
+                #[derive(Debug, Deserialize, PartialEq)]
+                struct foo;
+                #[derive(Debug, Deserialize, PartialEq)]
+                struct FoO;
+                #[derive(Debug, Deserialize, PartialEq)]
+                struct FOO;
+                #[derive(Debug, Deserialize, PartialEq)]
+                struct fOO;
 
-        #[test]
-        fn unit_struct_renamed() {
-            #[derive(Debug, Deserialize, PartialEq)]
-            #[serde(rename = "BAR")]
-            struct Bar;
+                assert_eq!(from_str::<foo>("foo").unwrap(), foo);
+                assert_eq!(from_str::<FoO>("FoO").unwrap(), FoO);
+                assert_eq!(from_str::<FOO>("FOO").unwrap(), FOO);
+                assert_eq!(from_str::<fOO>("fOO").unwrap(), fOO);
 
-            assert_eq!(from_str::<Bar>("BAR").unwrap(), Bar);
-            assert!(from_str::<Bar>("bAR").is_err());
-            assert!(from_str::<Bar>("bar").is_err());
+                assert!(from_str::<foo>("Foo").is_err());
+                assert!(from_str::<foo>("FoO").is_err());
+                assert!(from_str::<foo>("FoO").is_err());
+                assert!(from_str::<foo>("FOo").is_err());
+
+                assert!(from_str::<FoO>("Foo").is_err());
+                assert!(from_str::<FoO>("foO").is_err());
+                assert!(from_str::<FoO>("foo").is_err());
+                assert!(from_str::<FoO>("FOo").is_err());
+
+                assert!(from_str::<FOO>("Foo").is_err());
+                assert!(from_str::<FOO>("foO").is_err());
+                assert!(from_str::<FOO>("FoO").is_err());
+                assert!(from_str::<FOO>("FOo").is_err());
+
+                assert!(from_str::<fOO>("Foo").is_err());
+                assert!(from_str::<fOO>("foO").is_err());
+                assert!(from_str::<fOO>("foO").is_err());
+                assert!(from_str::<fOO>("FOo").is_err());
+            }
+
+            #[test]
+            fn space_sensisitive() {
+                #[derive(Debug, Deserialize, PartialEq)]
+                struct Foo;
+
+                assert_eq!(from_str::<Foo>("Foo").unwrap(), Foo);
+                assert!(from_str::<Foo>("Foo ").is_err());
+                assert!(from_str::<Foo>(" Foo").is_err());
+                assert!(from_str::<Foo>("F oo").is_err());
+                assert!(from_str::<Foo>("F o o").is_err());
+            }
+
+            #[test]
+            fn unit_struct() {
+                #[derive(Debug, Deserialize, PartialEq)]
+                struct Bar;
+
+                assert_eq!(from_str::<Bar>("Bar").unwrap(), Bar);
+            }
+
+            #[test]
+            fn unit_struct_renamed() {
+                #[derive(Debug, Deserialize, PartialEq)]
+                #[serde(rename = "BAR")]
+                struct Bar;
+
+                assert_eq!(from_str::<Bar>("BAR").unwrap(), Bar);
+                assert!(from_str::<Bar>("bAR").is_err());
+                assert!(from_str::<Bar>("bar").is_err());
+            }
         }
     }
 }
