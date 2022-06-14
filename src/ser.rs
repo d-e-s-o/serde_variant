@@ -41,6 +41,44 @@ impl ser::SerializeStructVariant for StructVariantSerializer {
     }
 }
 
+/// A serializer for tuple structs.
+pub struct TupleStructSerializer(&'static str);
+
+impl ser::SerializeTupleStruct for TupleStructSerializer {
+    type Ok = &'static str;
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<()>
+    where
+        T: Serialize,
+    {
+        Ok(())
+    }
+
+    fn end(self) -> Result<Self::Ok> {
+        Ok(self.0)
+    }
+}
+
+/// A serializer for structs.
+pub struct StructSerializer(&'static str);
+
+impl ser::SerializeStruct for StructSerializer {
+    type Ok = &'static str;
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _value: &T) -> Result<()>
+    where
+        T: Serialize,
+    {
+        Ok(())
+    }
+
+    fn end(self) -> Result<Self::Ok> {
+        Ok(self.0)
+    }
+}
+
 /// A serde serializer that converts an enum or struct into its name.
 pub struct Serializer {}
 
@@ -61,10 +99,10 @@ impl<'a> ser::Serializer for &'a mut Serializer {
 
     type SerializeSeq = ser::Impossible<Self::Ok, Self::Error>;
     type SerializeTuple = ser::Impossible<Self::Ok, Self::Error>;
-    type SerializeTupleStruct = ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTupleStruct = TupleStructSerializer;
     type SerializeTupleVariant = TupleVariantSerializer;
     type SerializeMap = ser::Impossible<Self::Ok, Self::Error>;
-    type SerializeStruct = ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStruct = StructSerializer;
     type SerializeStructVariant = StructVariantSerializer;
 
     fn serialize_bool(self, _v: bool) -> SerializationResult {
@@ -152,10 +190,10 @@ impl<'a> ser::Serializer for &'a mut Serializer {
 
     fn serialize_tuple_struct(
         self,
-        _name: &'static str,
+        name: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        unsupported!("tuple struct")
+        Ok(TupleStructSerializer(name))
     }
 
     fn serialize_tuple_variant(
@@ -172,8 +210,8 @@ impl<'a> ser::Serializer for &'a mut Serializer {
         unsupported!("map")
     }
 
-    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        unsupported!("struct")
+    fn serialize_struct(self, name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
+        Ok(StructSerializer(name))
     }
 
     fn serialize_struct_variant(

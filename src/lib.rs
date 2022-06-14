@@ -131,6 +131,14 @@ mod tests {
             }
 
             #[test]
+            fn tuple_structs() {
+                #[derive(Serialize)]
+                struct Bar(u64, u64);
+
+                assert_eq!(to_str(&Bar(1, 42)).unwrap(), "Bar");
+            }
+
+            #[test]
             fn field_structs() {
                 #[derive(Serialize)]
                 struct Bar {
