@@ -31,7 +31,7 @@ where
 /// hold data (newtype, tuple, field variants / structs)
 /// can't be deserialized since data was discarded during
 /// serialization.
-pub fn from_str<'a, E>(value: &'static str) -> Result<E>
+pub fn from_str<'a, E>(value: &'a str) -> Result<E>
 where
     E: Deserialize<'a>,
 {
