@@ -17,7 +17,7 @@ pub use ser::Serializer;
 ///
 /// Keep in mind that all data held by the value is
 /// discarded and only the type name is serialized.
-pub fn to_string<T>(value: &T) -> Result<&'static str>
+pub fn to_str<T>(value: &T) -> Result<&'static str>
 where
     T: Serialize,
 {
@@ -63,8 +63,8 @@ mod tests {
                     Var2,
                 }
 
-                assert_eq!(to_string(&Foo::Var1).unwrap(), "Var1");
-                assert_eq!(to_string(&Foo::Var2).unwrap(), "VAR2");
+                assert_eq!(to_str(&Foo::Var1).unwrap(), "Var1");
+                assert_eq!(to_str(&Foo::Var2).unwrap(), "VAR2");
             }
 
             #[test]
@@ -76,8 +76,8 @@ mod tests {
                     Var2(u32),
                 }
 
-                assert_eq!(to_string(&Foo::Var1(())).unwrap(), "Var1");
-                assert_eq!(to_string(&Foo::Var2(42)).unwrap(), "VAR2");
+                assert_eq!(to_str(&Foo::Var1(())).unwrap(), "Var1");
+                assert_eq!(to_str(&Foo::Var2(42)).unwrap(), "VAR2");
             }
 
             #[test]
@@ -89,8 +89,8 @@ mod tests {
                     Var((), (), ()),
                 }
 
-                assert_eq!(to_string(&Foo::BAz((), 1337)).unwrap(), "BAz");
-                assert_eq!(to_string(&Foo::Var((), (), ())).unwrap(), "VAR");
+                assert_eq!(to_str(&Foo::BAz((), 1337)).unwrap(), "BAz");
+                assert_eq!(to_str(&Foo::Var((), (), ())).unwrap(), "VAR");
             }
 
             #[test]
@@ -106,8 +106,8 @@ mod tests {
                     },
                 }
 
-                assert_eq!(to_string(&Foo::Var1 { field: 0 }).unwrap(), "Var1");
-                assert_eq!(to_string(&Foo::Var2 { foo: "BAR" }).unwrap(), "Renamed");
+                assert_eq!(to_str(&Foo::Var1 { field: 0 }).unwrap(), "Var1");
+                assert_eq!(to_str(&Foo::Var2 { foo: "BAR" }).unwrap(), "Renamed");
             }
         }
 
@@ -119,7 +119,7 @@ mod tests {
                 #[derive(Serialize)]
                 struct Bar;
 
-                assert_eq!(to_string(&Bar).unwrap(), "Bar");
+                assert_eq!(to_str(&Bar).unwrap(), "Bar");
             }
 
             #[test]
@@ -127,7 +127,7 @@ mod tests {
                 #[derive(Serialize)]
                 struct Bar(u64);
 
-                assert_eq!(to_string(&Bar(42)).unwrap(), "Bar");
+                assert_eq!(to_str(&Bar(42)).unwrap(), "Bar");
             }
 
             #[test]
@@ -135,7 +135,7 @@ mod tests {
                 #[derive(Serialize)]
                 struct Bar(u64, u64);
 
-                assert_eq!(to_string(&Bar(1, 42)).unwrap(), "Bar");
+                assert_eq!(to_str(&Bar(1, 42)).unwrap(), "Bar");
             }
 
             #[test]
@@ -145,7 +145,7 @@ mod tests {
                     field: u8,
                 }
 
-                assert_eq!(to_string(&Bar { field: 0 }).unwrap(), "Bar");
+                assert_eq!(to_str(&Bar { field: 0 }).unwrap(), "Bar");
             }
         }
     }
