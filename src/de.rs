@@ -156,14 +156,11 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
         )))
     }
 
-    fn deserialize_unit<V>(self, _visitor: V) -> Result<V::Value>
+    fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "unit".to_owned(),
-        )))
+        visitor.visit_unit()
     }
 
     fn deserialize_char<V>(self, _visitor: V) -> Result<V::Value>
@@ -244,11 +241,20 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
         )))
     }
 
-    fn deserialize_unit_struct<V>(self, _name: &'static str, visitor: V) -> Result<V::Value>
+    fn deserialize_unit_struct<V>(self, name: &'static str, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_newtype_struct(self)
+        if self.input == name {
+            self.input = "";
+            visitor.visit_unit()
+        } else {
+            Err(ErrorCode::InvalidType {
+                unexpected: self.input.to_owned(),
+                expected: name.to_owned(),
+            }
+            .into())
+        }
     }
 
     fn deserialize_tuple_struct<V>(
@@ -307,11 +313,14 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
         )))
     }
 
-    fn deserialize_newtype_struct<V>(self, _name: &'static str, visitor: V) -> Result<V::Value>
+    fn deserialize_newtype_struct<V>(self, _name: &'static str, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_newtype_struct(self)
+        Err(Error::from(ErrorCode::UnsupportedOperation(
+            Direction::Deserialization,
+            "new type struct".to_owned(),
+        )))
     }
 
     fn deserialize_enum<V>(
