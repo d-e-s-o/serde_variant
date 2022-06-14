@@ -19,13 +19,13 @@ identifier of any `enum` variant passed to it.
 
 ## Usage
 
-The crate provides the two functions `to_str` and `from_str` which can be used
+The crate provides the two functions `to_string` and `from_str` which can be used
 to serialize types into their names and even deserialize them again if they
 didnt held any data:
 
 ```rust
 use serde::{Serialize, Deserialize};
-use serde_variant::{to_str, from_str};
+use serde_variant::{to_string, from_str};
 
 #[derive(Serialize, Deserialize)]
 enum Foo {
@@ -38,11 +38,11 @@ enum Foo {
 }
 
 // Safe to serialize, held data gets discarded
-assert_eq!(to_str(&Foo::UnitVariant).unwrap(), "UnitVariant");
-assert_eq!(to_str(&Foo::Renamed).unwrap(), "RENAMED");
-assert_eq!(to_str(&Foo::HoldsData(0)).unwrap(), "HoldsData");
-assert_eq!(to_str(&Foo::HoldsDataAsTuple(0, 0)).unwrap(), "HoldsDataAsTuple");
-assert_eq!(to_str(&Foo::HoldsDataAsStruct { field: 0 }).unwrap(), "HoldsDataAsStruct");
+assert_eq!(to_string(&Foo::UnitVariant).unwrap(), "UnitVariant");
+assert_eq!(to_string(&Foo::Renamed).unwrap(), "RENAMED");
+assert_eq!(to_string(&Foo::HoldsData(0)).unwrap(), "HoldsData");
+assert_eq!(to_string(&Foo::HoldsDataAsTuple(0, 0)).unwrap(), "HoldsDataAsTuple");
+assert_eq!(to_string(&Foo::HoldsDataAsStruct { field: 0 }).unwrap(), "HoldsDataAsStruct");
 
 // Safe to deserialize since no data is held
 assert_eq!(from_str::<Foo>("UnitVariant").unwrap(), Foo::UnitVariant);
