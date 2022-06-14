@@ -3,6 +3,7 @@ use crate::{Error, ErrorCode, Result};
 use serde::de;
 use serde::de::Error as DeError;
 
+/// A serde deserializer that a typename into an rust type if possible.
 pub struct Deserializer<'de> {
     pub(crate) input: &'de str,
 }

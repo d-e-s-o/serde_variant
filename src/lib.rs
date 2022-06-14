@@ -13,11 +13,10 @@ pub(crate) use error::ErrorCode;
 pub use error::{Error, Result};
 pub use ser::Serializer;
 
-/// Convert an enum variant into its name.
+/// Convert enums and structs into its variant name.
 ///
-/// Note that only enum variants and unit structs may be
-/// converted here and all other types will result in an
-/// `UnsupportedType` error.
+/// Keep in mind that all data held by the value is
+/// discarded and only the type name is serialized.
 pub fn to_str<T>(value: &T) -> Result<&'static str>
 where
     T: Serialize,
@@ -26,10 +25,12 @@ where
     value.serialize(&mut serializer)
 }
 
-/// Convert a str into an enum
+/// Convert a variant name back into an enum or struct if possible.
 ///
-/// Note that only unit enum variants and unit structs may be
-/// constructed from a string
+/// Keep in mind that all target variants or structs which
+/// hold data (newtype, tuple, field variants / structs)
+/// can't be deserialized since data was discarded during
+/// serialization.
 pub fn from_str<'a, E>(value: &'static str) -> Result<E>
 where
     E: Deserialize<'a>,

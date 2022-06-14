@@ -41,8 +41,7 @@ impl ser::SerializeStructVariant for StructVariantSerializer {
     }
 }
 
-/// A serde serializer that converts an enum variant into the variant's
-/// name.
+/// A serde serializer that converts an enum or struct into its name.
 pub struct Serializer {}
 
 type SerializationResult = Result<&'static str>;
