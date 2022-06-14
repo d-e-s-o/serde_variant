@@ -2,12 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 mod de;
+mod error;
 mod ser;
 
 use serde::Deserialize;
 use serde::Serialize;
 
 pub use de::Deserializer;
+pub(crate) use error::ErrorCode;
+pub use error::{Error, Result};
 pub use ser::Serializer;
 
 /// Convert an enum variant into its name.
@@ -15,7 +18,7 @@ pub use ser::Serializer;
 /// Note that only enum variants and unit structs may be
 /// converted here and all other types will result in an
 /// `UnsupportedType` error.
-pub fn to_str<T>(value: &T) -> Result<&'static str, ser::UnsupportedType>
+pub fn to_str<T>(value: &T) -> Result<&'static str>
 where
     T: Serialize,
 {
@@ -27,18 +30,16 @@ where
 ///
 /// Note that only unit enum variants and unit structs may be
 /// constructed from a string
-pub fn from_str<'a, E>(value: &'static str) -> Result<E, de::DeserializationError>
+pub fn from_str<'a, E>(value: &'static str) -> Result<E>
 where
     E: Deserialize<'a>,
 {
-    let mut deserializer = de::Deserializer::from_str(value);
+    let mut deserializer = de::Deserializer::new(value);
     let variant = E::deserialize(&mut deserializer)?;
     if deserializer.input.is_empty() {
         Ok(variant)
     } else {
-        Err(de::DeserializationError::InvalidVariantName {
-            name: value.to_string(),
-        })
+        Err(Error::from(error::ErrorCode::TrailingCharacters))
     }
 }
 
