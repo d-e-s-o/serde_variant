@@ -13,6 +13,15 @@ impl<'de> Deserializer<'de> {
     }
 }
 
+macro_rules! unsupported {
+    ($ty:expr) => {
+        Err(Error::from(ErrorCode::UnsupportedOperation(
+            Direction::Deserialization,
+            $ty.to_owned(),
+        )))
+    };
+}
+
 impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     type Error = Error;
 
@@ -20,140 +29,98 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "bool".to_owned(),
-        )))
+        unsupported!("bool")
     }
 
     fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "any".to_owned(),
-        )))
+        unsupported!("any")
     }
 
     fn deserialize_i8<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "i8".to_owned(),
-        )))
+        unsupported!("i8")
     }
 
     fn deserialize_i16<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "i16".to_owned(),
-        )))
+        unsupported!("i16")
     }
 
     fn deserialize_i32<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "i32".to_owned(),
-        )))
+        unsupported!("i32")
     }
 
     fn deserialize_i64<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "i64".to_owned(),
-        )))
+        unsupported!("i64")
     }
 
     fn deserialize_i128<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "i128".to_owned(),
-        )))
+        unsupported!("i128")
     }
 
     fn deserialize_u8<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "u8".to_owned(),
-        )))
+        unsupported!("u8")
     }
 
     fn deserialize_u16<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "u16".to_owned(),
-        )))
+        unsupported!("u16")
     }
 
     fn deserialize_u32<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "u32".to_owned(),
-        )))
+        unsupported!("u32")
     }
 
     fn deserialize_u64<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "u64".to_owned(),
-        )))
+        unsupported!("u64")
     }
 
     fn deserialize_u128<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "u128".to_owned(),
-        )))
+        unsupported!("u128")
     }
 
     fn deserialize_f32<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "f32".to_owned(),
-        )))
+        unsupported!("f32")
     }
 
     fn deserialize_f64<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "f64".to_owned(),
-        )))
+        unsupported!("f64")
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value>
@@ -167,10 +134,7 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "char".to_owned(),
-        )))
+        unsupported!("char")
     }
 
     fn deserialize_str<V>(mut self, visitor: V) -> Result<V::Value>
@@ -193,20 +157,14 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "bytes".to_owned(),
-        )))
+        unsupported!("bytes")
     }
 
     fn deserialize_byte_buf<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "byte buf".to_owned(),
-        )))
+        unsupported!("byte buf")
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value>
@@ -220,10 +178,7 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "tuple".to_owned(),
-        )))
+        unsupported!("tuple")
     }
 
     fn deserialize_struct<V>(
@@ -235,10 +190,7 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "struct".to_owned(),
-        )))
+        unsupported!("struct")
     }
 
     fn deserialize_unit_struct<V>(self, name: &'static str, visitor: V) -> Result<V::Value>
@@ -249,11 +201,10 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
             self.input = "";
             visitor.visit_unit()
         } else {
-            Err(ErrorCode::InvalidType {
+            Err(Error::from(ErrorCode::InvalidType {
                 unexpected: self.input.to_owned(),
                 expected: name.to_owned(),
-            }
-            .into())
+            }))
         }
     }
 
@@ -266,30 +217,21 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "tuple struct".to_owned(),
-        )))
+        unsupported!("tuple struct")
     }
 
     fn deserialize_map<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "map".to_owned(),
-        )))
+        unsupported!("map")
     }
 
     fn deserialize_seq<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "seq".to_owned(),
-        )))
+        unsupported!("seq")
     }
 
     fn deserialize_option<V>(self, visitor: V) -> Result<V::Value>
@@ -307,20 +249,14 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "any".to_owned(),
-        )))
+        unsupported!("any")
     }
 
     fn deserialize_newtype_struct<V>(self, _name: &'static str, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "new type struct".to_owned(),
-        )))
+        unsupported!("new type struct")
     }
 
     fn deserialize_enum<V>(
@@ -372,29 +308,20 @@ impl<'de, 'a> de::VariantAccess<'de> for VariantName<'a, 'de> {
     where
         T: de::DeserializeSeed<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "new type variant".to_owned(),
-        )))
+        unsupported!("new type variant")
     }
 
     fn tuple_variant<V>(self, _len: usize, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "tuple variant".to_owned(),
-        )))
+        unsupported!("tuple variant")
     }
 
     fn struct_variant<V>(self, _fields: &'static [&'static str], _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Deserialization,
-            "struct variant".to_owned(),
-        )))
+        unsupported!("struct variant")
     }
 }

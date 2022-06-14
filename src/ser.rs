@@ -47,6 +47,15 @@ pub struct Serializer {}
 
 type SerializationResult = Result<&'static str>;
 
+macro_rules! unsupported {
+    ($ty:expr) => {
+        Err(Error::from(ErrorCode::UnsupportedOperation(
+            Direction::Serialization,
+            $ty.to_owned(),
+        )))
+    };
+}
+
 impl<'a> ser::Serializer for &'a mut Serializer {
     type Ok = &'static str;
     type Error = Error;
@@ -60,108 +69,63 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     type SerializeStructVariant = StructVariantSerializer;
 
     fn serialize_bool(self, _v: bool) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "bool".to_owned(),
-        )))
+        unsupported!("bool")
     }
 
     fn serialize_i8(self, _v: i8) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "i8".to_owned(),
-        )))
+        unsupported!("i8")
     }
 
     fn serialize_i16(self, _v: i16) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "i16".to_owned(),
-        )))
+        unsupported!("i16")
     }
 
     fn serialize_i32(self, _v: i32) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "i32".to_owned(),
-        )))
+        unsupported!("i32")
     }
 
     fn serialize_i64(self, _v: i64) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "i64".to_owned(),
-        )))
+        unsupported!("i64")
     }
 
     fn serialize_u8(self, _v: u8) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "u8".to_owned(),
-        )))
+        unsupported!("u8")
     }
 
     fn serialize_u16(self, _v: u16) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "u16".to_owned(),
-        )))
+        unsupported!("u16")
     }
 
     fn serialize_u32(self, _v: u32) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "u32".to_owned(),
-        )))
+        unsupported!("u32")
     }
 
     fn serialize_u64(self, _v: u64) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "u64".to_owned(),
-        )))
+        unsupported!("u64")
     }
 
     fn serialize_f32(self, _v: f32) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "f32".to_owned(),
-        )))
+        unsupported!("f32")
     }
 
     fn serialize_f64(self, _v: f64) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "f64".to_owned(),
-        )))
+        unsupported!("f64")
     }
 
     fn serialize_char(self, _v: char) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "char".to_owned(),
-        )))
+        unsupported!("char")
     }
 
     fn serialize_str(self, _v: &str) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "str".to_owned(),
-        )))
+        unsupported!("str")
     }
 
     fn serialize_bytes(self, _v: &[u8]) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "bytes".to_owned(),
-        )))
+        unsupported!("bytes")
     }
 
     fn serialize_none(self) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "none".to_owned(),
-        )))
+        unsupported!("none")
     }
 
     fn serialize_some<T>(self, value: &T) -> SerializationResult
@@ -172,10 +136,7 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     }
 
     fn serialize_unit(self) -> SerializationResult {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "unit".to_owned(),
-        )))
+        unsupported!("unit")
     }
 
     fn serialize_unit_struct(self, name: &'static str) -> SerializationResult {
@@ -183,17 +144,11 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq> {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "seq".to_owned(),
-        )))
+        unsupported!("seq")
     }
 
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "tuple".to_owned(),
-        )))
+        unsupported!("tuple")
     }
 
     fn serialize_tuple_struct(
@@ -201,10 +156,7 @@ impl<'a> ser::Serializer for &'a mut Serializer {
         _name: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "tuple struct".to_owned(),
-        )))
+        unsupported!("tuple struct")
     }
 
     fn serialize_tuple_variant(
@@ -218,17 +170,11 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     }
 
     fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "map".to_owned(),
-        )))
+        unsupported!("map")
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "struct".to_owned(),
-        )))
+        unsupported!("struct")
     }
 
     fn serialize_struct_variant(
@@ -245,10 +191,7 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     where
         T: ?Sized,
     {
-        Err(Error::from(ErrorCode::UnsupportedOperation(
-            Direction::Serialization,
-            "collect str".to_owned(),
-        )))
+        unsupported!("collect str")
     }
 
     fn serialize_unit_variant(
