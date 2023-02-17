@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Daniel Mueller <deso@posteo.net>
+// Copyright (C) 2020-2023 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use std::error::Error;
@@ -8,6 +8,7 @@ use std::fmt::Result as FmtResult;
 
 use serde::ser::Error as SerdeError;
 use serde::ser::Impossible;
+use serde::ser::SerializeStructVariant;
 use serde::ser::SerializeTupleVariant;
 use serde::Serialize;
 use serde::Serializer as SerdeSerializer;
@@ -78,6 +79,27 @@ impl SerializeTupleVariant for TupleVariantSerializer {
   }
 }
 
+/// A serializer for struct enum variants.
+struct StructVariantSerializer(&'static str);
+
+impl SerializeStructVariant for StructVariantSerializer {
+  type Ok = &'static str;
+  type Error = UnsupportedType;
+
+  #[inline]
+  fn serialize_field<T>(&mut self, _key: &'static str, _value: &T) -> Result<(), Self::Error>
+  where
+    T: ?Sized + Serialize,
+  {
+    Ok(())
+  }
+
+  #[inline]
+  fn end(self) -> Result<Self::Ok, Self::Error> {
+    Ok(self.0)
+  }
+}
+
 
 /// A serde serializer that converts an enum variant into the variant's
 /// name.
@@ -93,7 +115,7 @@ impl<'a> SerdeSerializer for &'a mut Serializer {
   type SerializeTupleVariant = TupleVariantSerializer;
   type SerializeMap = Impossible<Self::Ok, Self::Error>;
   type SerializeStruct = Impossible<Self::Ok, Self::Error>;
-  type SerializeStructVariant = Impossible<Self::Ok, Self::Error>;
+  type SerializeStructVariant = StructVariantSerializer;
 
   #[inline]
   fn serialize_bool(self, _v: bool) -> Result<Self::Ok, Self::Error> {
@@ -273,10 +295,10 @@ impl<'a> SerdeSerializer for &'a mut Serializer {
     self,
     _name: &'static str,
     _variant_index: u32,
-    _variant: &'static str,
+    variant: &'static str,
     _len: usize,
   ) -> Result<Self::SerializeStructVariant, Self::Error> {
-    Err(Self::Error::custom("serialize_struct_variant"))
+    Ok(StructVariantSerializer(variant))
   }
 
   #[inline]
@@ -338,5 +360,24 @@ mod tests {
     struct Bar(u64);
 
     assert_eq!(to_variant_name(&Bar(42)).unwrap(), "Bar");
+  }
+
+  /// Check that we can correctly retrieve names of enum struct
+  /// variants.
+  #[test]
+  fn struct_variant_names() {
+    #[derive(Serialize)]
+    enum Foo {
+      Baz {
+        i: i32,
+      },
+      #[serde(rename = "VAR")]
+      Var {
+        i: i32,
+      },
+    }
+
+    assert_eq!(to_variant_name(&Foo::Baz { i: 0 }).unwrap(), "Baz");
+    assert_eq!(to_variant_name(&Foo::Var { i: 0 }).unwrap(), "VAR");
   }
 }
