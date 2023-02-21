@@ -1,6 +1,7 @@
 Unreleased
 ----------
 - Tagged more functions and methods as `#[inline]`
+- Bumped minimum supported Rust version to `1.57`
 
 
 0.1.1

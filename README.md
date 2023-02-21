@@ -1,7 +1,7 @@
 [![pipeline](https://gitlab.com/d-e-s-o/serde_variant/badges/main/pipeline.svg)](https://gitlab.com/d-e-s-o/serde_variant/commits/main)
 [![crates.io](https://img.shields.io/crates/v/serde_variant.svg)](https://crates.io/crates/serde_variant)
 [![Docs](https://docs.rs/serde_variant/badge.svg)](https://docs.rs/serde_variant)
-[![rustc](https://img.shields.io/badge/rustc-1.31+-blue.svg)](https://blog.rust-lang.org/2018/12/06/Rust-1.31-and-rust-2018.html)
+[![rustc](https://img.shields.io/badge/rustc-1.57+-blue.svg)](https://blog.rust-lang.org/2021/12/02/Rust-1.57.0.html)
 
 serde_variant
 =============
