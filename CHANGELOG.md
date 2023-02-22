@@ -1,6 +1,7 @@
 Unreleased
 ----------
 - Tagged more functions and methods as `#[inline]`
+- Switched to using GitHub Actions as CI provider
 - Bumped minimum supported Rust version to `1.57`
 
 
