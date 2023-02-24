@@ -3,7 +3,10 @@
 
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+  workflow_call:
 
 env:
   CARGO_TERM_COLOR: always
