@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.1.2
+-----
 - Added support for struct enum variants
 - Tagged more functions and methods as `#[inline]`
 - Switched to using GitHub Actions as CI provider
