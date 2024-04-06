@@ -13,7 +13,7 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@stable
     - name: Publish serde_variant
       run: cargo publish --locked --no-verify --token "${CARGO_REGISTRY_TOKEN}"
