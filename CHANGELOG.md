@@ -1,3 +1,8 @@
+Unreleased
+----------
+- Relicensed project under terms of `Apache-2.0 OR MIT`
+
+
 0.1.2
 -----
 - Added support for struct enum variants

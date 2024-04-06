@@ -1,5 +1,5 @@
-// Copyright (C) 2020-2023 Daniel Mueller <deso@posteo.net>
-// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2020-2024 Daniel Mueller <deso@posteo.net>
+// SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 use std::error::Error;
 use std::fmt::Display;
