@@ -30,11 +30,9 @@ jobs:
         profile: [dev, release]
     steps:
     - uses: actions/checkout@v3
-    - uses: actions-rs/toolchain@v1
+    - uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.rust }}
-        profile: minimal
-        override: true
     - name: Build ${{ matrix.profile }}
       run: |
         cargo build --profile=${{ matrix.profile }} --bins --tests --examples
@@ -44,10 +42,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
-          override: true
+      - uses: dtolnay/rust-toolchain@stable
       - run:
           cargo clippy --all-targets --all-features -- -D warnings
