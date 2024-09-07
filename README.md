@@ -1,4 +1,4 @@
-[![pipeline](https://github.com/d-e-s-o/serde_variant/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/d-e-s-o/serde_variant/actions/workflows/ci.yml)
+[![pipeline](https://github.com/d-e-s-o/serde_variant/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/d-e-s-o/serde_variant/actions/workflows/test.yml)
 [![crates.io](https://img.shields.io/crates/v/serde_variant.svg)](https://crates.io/crates/serde_variant)
 [![Docs](https://docs.rs/serde_variant/badge.svg)](https://docs.rs/serde_variant)
 [![rustc](https://img.shields.io/badge/rustc-1.57+-blue.svg)](https://blog.rust-lang.org/2021/12/02/Rust-1.57.0.html)
