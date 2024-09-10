@@ -1,5 +1,5 @@
-Unreleased
-----------
+0.1.3
+-----
 - Relicensed project under terms of `Apache-2.0 OR MIT`
 
 
