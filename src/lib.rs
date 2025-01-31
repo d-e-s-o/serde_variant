@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Daniel Mueller <deso@posteo.net>
+// Copyright (C) 2020-2025 Daniel Mueller <deso@posteo.net>
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 use std::error::Error;
@@ -105,7 +105,7 @@ impl SerializeStructVariant for StructVariantSerializer {
 /// name.
 struct Serializer {}
 
-impl<'a> SerdeSerializer for &'a mut Serializer {
+impl SerdeSerializer for &mut Serializer {
   type Ok = &'static str;
   type Error = UnsupportedType;
 
