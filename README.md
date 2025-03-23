@@ -1,4 +1,3 @@
-[<img src="https://api.gitsponsors.com/api/badge/img?id=236425181" height="20">](https://api.gitsponsors.com/api/badge/link?p=P58MNadtrtPjeIbQX028NG8FfWKyzKmG3SDlkeYryCbXJXvg4RZJw95m25D/3iTt)
 [![pipeline](https://github.com/d-e-s-o/serde_variant/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/d-e-s-o/serde_variant/actions/workflows/test.yml)
 [![crates.io](https://img.shields.io/crates/v/serde_variant.svg)](https://crates.io/crates/serde_variant)
 [![Docs](https://docs.rs/serde_variant/badge.svg)](https://docs.rs/serde_variant)
